@@ -1,3 +1,4 @@
+
 export interface GardeningTip {
   id: string;
   title: string;
@@ -45,7 +46,7 @@ export const gardeningTips: GardeningTip[] = [
   {
     id: '6',
     title: 'Coffee Grounds in Compost',
-    content: 'Add used coffee grounds to your compost pile. They're rich in nitrogen and help create high-quality compost for your garden.',
+    content: 'Add used coffee grounds to your compost pile. They\'re rich in nitrogen and help create high-quality compost for your garden.',
     category: 'composting',
     difficulty: 'beginner'
   },
@@ -59,7 +60,7 @@ export const gardeningTips: GardeningTip[] = [
   {
     id: '8',
     title: 'Soil pH Testing',
-    content: 'Test your soil's pH before planting. Most vegetables prefer a slightly acidic soil with a pH between 6.0 and 7.0. Adjust as needed with lime (to raise pH) or sulfur (to lower pH).',
+    content: 'Test your soil\'s pH before planting. Most vegetables prefer a slightly acidic soil with a pH between 6.0 and 7.0. Adjust as needed with lime (to raise pH) or sulfur (to lower pH).',
     category: 'soil-care',
     difficulty: 'intermediate'
   },
