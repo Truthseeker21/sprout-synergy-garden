@@ -13,6 +13,7 @@ import Community from "./pages/Community";
 import Challenges from "./pages/Challenges";
 import Journal from "./pages/Journal";
 import Settings from "./pages/Settings";
+import PlantIdentification from "./pages/PlantIdentification";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,14 @@ const App = () => (
             element={
               <PrivateRoute>
                 <Journal />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/identify" 
+            element={
+              <PrivateRoute>
+                <PlantIdentification />
               </PrivateRoute>
             } 
           />
