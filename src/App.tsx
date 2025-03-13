@@ -8,6 +8,11 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Plants from "./pages/Plants";
 import PlantDetail from "./pages/PlantDetail";
+import Techniques from "./pages/Techniques";
+import Community from "./pages/Community";
+import Challenges from "./pages/Challenges";
+import Journal from "./pages/Journal";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -44,8 +49,62 @@ const App = () => (
               </AdminRoute>
             }
           />
-          <Route path="/plants" element={<Plants />} />
-          <Route path="/plants/:id" element={<PlantDetail />} />
+          <Route 
+            path="/plants" 
+            element={
+              <PrivateRoute>
+                <Plants />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/plants/:id" 
+            element={
+              <PrivateRoute>
+                <PlantDetail />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/techniques" 
+            element={
+              <PrivateRoute>
+                <Techniques />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/community" 
+            element={
+              <PrivateRoute>
+                <Community />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/challenges" 
+            element={
+              <PrivateRoute>
+                <Challenges />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/journal" 
+            element={
+              <PrivateRoute>
+                <Journal />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            } 
+          />
           <Route path="*" element={<Navigate to="/auth" replace />} />
         </Routes>
       </BrowserRouter>
