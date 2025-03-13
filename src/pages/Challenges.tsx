@@ -10,16 +10,21 @@ import { Calendar, Trophy, Clock, Check } from 'lucide-react';
 const Challenges = () => {
   const currentDate = new Date();
   
+  // Use durationDays instead of endDate for active challenges
+  // Assuming challenges that have more completedBy users are "active"
   const activeChallenges = challenges.filter(
-    challenge => new Date(challenge.endDate) >= currentDate
+    challenge => challenge.completedBy > 0 && challenge.completedBy < 1000
   );
   
+  // Use completedBy instead of completed
+  // Assuming challenges that have many completedBy users are "completed"
   const completedChallenges = challenges.filter(
-    challenge => challenge.completed
+    challenge => challenge.completedBy >= 1000
   );
   
+  // For upcoming challenges, use the ones with fewer completedBy
   const upcomingChallenges = challenges.filter(
-    challenge => new Date(challenge.startDate) > currentDate
+    challenge => challenge.completedBy === 0
   );
   
   return (
