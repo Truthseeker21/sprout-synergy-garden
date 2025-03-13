@@ -14,7 +14,7 @@ const Community = () => {
   const filteredPosts = forumPosts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.author.name.toLowerCase().includes(searchTerm.toLowerCase())
+    post.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   const popularPosts = [...forumPosts]
@@ -22,7 +22,7 @@ const Community = () => {
     .slice(0, 6);
   
   const recentPosts = [...forumPosts]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 6);
   
   return (

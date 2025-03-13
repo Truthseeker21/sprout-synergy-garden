@@ -24,7 +24,8 @@ const sampleEntries = [
     date: '2023-04-15',
     plants: ['Tomato', 'Basil'],
     images: ['/placeholder.svg'],
-    weather: 'Sunny, 72°F'
+    weather: 'Sunny, 72°F',
+    tags: ['planting', 'spring', 'tomatoes', 'basil']
   },
   {
     id: '2',
@@ -33,7 +34,8 @@ const sampleEntries = [
     date: '2023-04-20',
     plants: ['Lettuce'],
     images: ['/placeholder.svg'],
-    weather: 'Partly Cloudy, 65°F'
+    weather: 'Partly Cloudy, 65°F',
+    tags: ['sprouts', 'lettuce', 'growth']
   },
   {
     id: '3',
@@ -42,7 +44,8 @@ const sampleEntries = [
     date: '2023-04-28',
     plants: ['Tomato', 'Pepper', 'Cucumber'],
     images: [],
-    weather: 'Sunny, 80°F'
+    weather: 'Sunny, 80°F',
+    tags: ['maintenance', 'mulch', 'summer-prep']
   }
 ];
 

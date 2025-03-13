@@ -1,7 +1,7 @@
 
 import React from 'react';
 import MainLayout from '@/components/MainLayout';
-import { challenges } from '@/data/challenges';
+import { gardeningChallenges as challenges } from '@/data/challenges';
 import ChallengeCard from '@/components/ChallengeCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

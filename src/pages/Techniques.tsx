@@ -20,7 +20,7 @@ const Techniques = () => {
   );
   
   const sustainableTechniques = gardeningTechniques.filter(
-    technique => technique.tags.includes('sustainable')
+    technique => technique.category === 'container' || technique.category === 'vertical'
   );
   
   return (
@@ -92,7 +92,7 @@ const Techniques = () => {
         <TabsContent value="seasonal">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {gardeningTechniques
-              .filter(technique => technique.tags.includes('seasonal'))
+              .filter(technique => technique.category === 'container')
               .map((technique) => (
                 <TechniqueCard key={technique.id} technique={technique} />
               ))}
