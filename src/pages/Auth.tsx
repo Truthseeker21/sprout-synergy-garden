@@ -33,16 +33,16 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md p-6 space-y-6 animate-fade-up">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 w-full">
+      <Card className="w-full max-w-md p-4 sm:p-6 space-y-4 sm:space-y-6 animate-fade-up">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold text-primary">AgriGrow</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary">AgriGrow</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Urban Gardening & Sustainability Guide
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-2">
             <Input
               type="email"
               placeholder="Email"
@@ -52,7 +52,7 @@ const Auth = () => {
               className="w-full"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1 sm:space-y-2">
             <Input
               type="password"
               placeholder="Password"
@@ -66,7 +66,7 @@ const Auth = () => {
             Sign In
           </Button>
         </form>
-        <div className="text-sm text-center text-muted-foreground">
+        <div className="text-xs sm:text-sm text-center text-muted-foreground">
           <p>Demo Accounts:</p>
           <p>Admin: admin@agrigrow.com / admin123</p>
           <p>User: user@agrigrow.com / user123</p>
