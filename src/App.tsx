@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import Plants from "./pages/Plants";
+import PlantDetail from "./pages/PlantDetail";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,8 @@ const App = () => (
               </AdminRoute>
             }
           />
+          <Route path="/plants" element={<Plants />} />
+          <Route path="/plants/:id" element={<PlantDetail />} />
           <Route path="*" element={<Navigate to="/auth" replace />} />
         </Routes>
       </BrowserRouter>
