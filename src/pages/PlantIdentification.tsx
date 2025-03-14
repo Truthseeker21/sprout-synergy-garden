@@ -1,259 +1,224 @@
 
 import React, { useState, useRef } from 'react';
-import MainLayout from '@/components/MainLayout';
-import { Input } from '@/components/ui/input';
+import { MainLayout } from '@/components/MainLayout';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
-import { Camera, Upload, Image, RefreshCw } from 'lucide-react';
-import { plants } from '@/data/plants';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { getPlantById, getRecommendedPlants, plants } from '@/data/plants';
 import PlantIdentificationResult from '@/components/PlantIdentificationResult';
+import { Camera, Upload, Info, Plant as PlantIcon } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const PlantIdentification = () => {
-  const [isIdentifying, setIsIdentifying] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [identificationResult, setIdentificationResult] = useState<{
-    plant: typeof plants[0] | null;
-    confidence: number;
-  } | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [identifiedPlant, setIdentifiedPlant] = useState<any>(null);
+  const [confidence, setConfidence] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check file type
-    if (!file.type.startsWith('image/')) {
-      toast({
-        variant: "destructive",
-        title: "Invalid file type",
-        description: "Please upload an image file (JPEG, PNG, etc.)",
-      });
-      return;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+        setIdentifiedPlant(null);
+      };
+      reader.readAsDataURL(file);
     }
-
-    // Check file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        variant: "destructive",
-        title: "File too large",
-        description: "Please upload an image smaller than 5MB",
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setSelectedImage(reader.result as string);
-      setIdentificationResult(null);
-    };
-    reader.readAsDataURL(file);
   };
 
-  const takePicture = () => {
-    // In a real app, this would access the device camera
-    // For this demo, we'll just trigger the file input
+  const handleCameraCapture = () => {
+    // In a real application, this would access the device camera
+    // For this prototype, we'll simulate it by clicking the file input
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  const identifyPlant = () => {
-    if (!selectedImage) return;
+  const handleIdentify = () => {
+    if (!selectedImage) {
+      toast({
+        title: "No image selected",
+        description: "Please upload an image or take a photo first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsAnalyzing(true);
     
-    setIsIdentifying(true);
-    
-    // Simulate API call to plant identification service
+    // Simulate API call to identify plant
     setTimeout(() => {
-      // For demo purposes, we'll just randomly select a plant from our database
+      // For demo purposes, randomly select a plant from our database
       const randomPlant = plants[Math.floor(Math.random() * plants.length)];
+      // Generate a random confidence level (higher is more likely for demo purposes)
       const randomConfidence = Math.floor(Math.random() * 30) + 70; // 70-99%
       
-      setIdentificationResult({
-        plant: randomPlant,
-        confidence: randomConfidence
-      });
-      
-      setIsIdentifying(false);
+      setIdentifiedPlant(randomPlant);
+      setConfidence(randomConfidence);
+      setIsAnalyzing(false);
     }, 2000);
   };
 
-  const resetIdentification = () => {
-    setSelectedImage(null);
-    setIdentificationResult(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const handleSaveToGarden = () => {
+    if (identifiedPlant) {
+      toast({
+        title: "Added to Garden",
+        description: `${identifiedPlant.name} has been added to your garden.`,
+      });
     }
   };
 
-  const saveToGarden = () => {
-    if (!identificationResult?.plant) return;
-    
-    toast({
-      title: "Plant Added to Garden",
-      description: `${identificationResult.plant.name} has been added to your garden.`,
-    });
+  const handleTryAgain = () => {
+    setSelectedImage(null);
+    setIdentifiedPlant(null);
+    setConfidence(0);
   };
 
   return (
-    <MainLayout title="Plant Identification">
-      <div className="mb-6">
-        <p className="text-muted-foreground mb-4">
-          Upload a photo or take a picture of a plant to identify it. Our system will analyze the image and tell you what plant it is.
-        </p>
-      </div>
-
-      {!selectedImage ? (
-        <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="upload">
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Photo
-            </TabsTrigger>
-            <TabsTrigger value="camera">
-              <Camera className="h-4 w-4 mr-2" />
-              Take Photo
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="upload">
+    <MainLayout>
+      <div className="container mx-auto py-6 max-w-5xl">
+        <h1 className="text-3xl font-bold mb-6">Plant Identification</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center w-full">
-                  <label htmlFor="plant-photo" className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Image className="w-10 h-10 mb-3 text-muted-foreground" />
-                      <p className="mb-2 text-sm text-muted-foreground">
-                        <span className="font-semibold">Click to upload</span> or drag and drop
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        PNG, JPG or JPEG (MAX. 5MB)
-                      </p>
-                    </div>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <PlantIcon className="h-5 w-5 mr-2 text-green-500" />
+                  Upload Plant Image
+                </CardTitle>
+                <CardDescription>
+                  Take a clear photo of the plant you want to identify
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid w-full gap-1.5">
+                    <Label htmlFor="picture">Picture</Label>
                     <Input 
-                      id="plant-photo" 
-                      ref={fileInputRef}
+                      id="picture" 
                       type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleFileChange}
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      ref={fileInputRef}
+                      className="hidden"
                     />
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="camera">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center">
-                  <div className="mb-6 p-4 bg-muted rounded-full">
-                    <Camera className="h-12 w-12 text-primary" />
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="mr-2 h-4 w-4" /> Upload Image
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handleCameraCapture}
+                      >
+                        <Camera className="mr-2 h-4 w-4" /> Take Photo
+                      </Button>
+                    </div>
                   </div>
-                  <Button onClick={takePicture} className="mb-2">
-                    <Camera className="h-4 w-4 mr-2" />
-                    Take a Photo
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    This will open your device camera
-                  </p>
+                  
+                  {selectedImage && (
+                    <div className="mt-4">
+                      <div className="border rounded-md overflow-hidden h-64 flex items-center justify-center bg-muted">
+                        <img 
+                          src={selectedImage} 
+                          alt="Selected plant" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <Button 
+                        onClick={handleIdentify} 
+                        className="w-full mt-4"
+                        disabled={isAnalyzing}
+                      >
+                        {isAnalyzing ? 'Analyzing...' : 'Identify Plant'}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Plant Photo</h2>
-            <Button variant="ghost" size="sm" onClick={resetIdentification}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Reset
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
+            
             <Card>
-              <CardContent className="pt-6">
-                <div className="aspect-square relative overflow-hidden rounded-md">
-                  <img 
-                    src={selectedImage} 
-                    alt="Selected plant" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2 text-blue-500" />
+                  Tips for Better Identification
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 list-disc pl-5">
+                  <li>Take a clear, well-lit photo</li>
+                  <li>Include flowers or fruits if possible</li>
+                  <li>Capture distinctive features (leaf shape, patterns)</li>
+                  <li>Include multiple parts of the plant if needed</li>
+                  <li>Avoid blurry or dark images</li>
+                </ul>
               </CardContent>
             </Card>
-
-            <div className="space-y-4">
-              {identificationResult ? (
-                <PlantIdentificationResult 
-                  plant={identificationResult.plant}
-                  confidence={identificationResult.confidence}
-                  onSaveToGarden={saveToGarden}
-                  onTryAgain={resetIdentification}
-                />
-              ) : (
-                <Card>
-                  <CardContent className="py-6">
-                    <Button 
-                      onClick={identifyPlant} 
-                      className="w-full" 
-                      disabled={isIdentifying}
-                    >
-                      {isIdentifying ? (
-                        <>
-                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Identifying...
-                        </>
-                      ) : (
-                        <>
-                          <Leaf className="h-4 w-4 mr-2" />
-                          Identify Plant
-                        </>
-                      )}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-
-              <Card>
-                <CardContent className="py-4">
-                  <h3 className="font-medium mb-2">Tips for better identification:</h3>
-                  <ul className="text-sm space-y-1 list-disc pl-5">
-                    <li>Focus on the plant's leaves, flowers, or fruits</li>
-                    <li>Ensure good lighting conditions</li>
-                    <li>Avoid blurry or dark images</li>
-                    <li>Include multiple parts of the plant if possible</li>
-                  </ul>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Common Philippine Plants</CardTitle>
+                <CardDescription>Plants you might encounter in your area</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {getRecommendedPlants().map((plant) => (
+                    <div key={plant.id} className="text-center">
+                      <div className="h-16 w-16 mx-auto rounded-full overflow-hidden bg-muted mb-2">
+                        <img 
+                          src={plant.image} 
+                          alt={plant.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <p className="text-xs font-medium">{plant.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter className="justify-center">
+                <Button variant="link" size="sm">View All Philippine Plants</Button>
+              </CardFooter>
+            </Card>
+          </div>
+          
+          <div>
+            {identifiedPlant ? (
+              <PlantIdentificationResult 
+                plant={identifiedPlant}
+                confidence={confidence}
+                onSaveToGarden={handleSaveToGarden}
+                onTryAgain={handleTryAgain}
+              />
+            ) : (
+              <Card className="h-full border-dashed border-2 border-muted-foreground/50 bg-muted/50">
+                <CardContent className="flex flex-col items-center justify-center h-full py-12 text-center">
+                  <PlantIcon className="h-16 w-16 mb-4 text-muted-foreground/60" />
+                  <h3 className="text-xl font-medium mb-2">No Plant Identified Yet</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md">
+                    Upload a photo of a plant you want to identify, and our system will analyze it
+                    and provide information about the plant.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Upload an Image
+                  </Button>
                 </CardContent>
               </Card>
-            </div>
+            )}
           </div>
-        </div>
-      )}
-
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Common Plants in the Philippines</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {plants.slice(0, 4).map((plant) => (
-            <Card key={plant.id} className="overflow-hidden">
-              <div className="aspect-square">
-                <img
-                  src={plant.image}
-                  alt={plant.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-3">
-                <h3 className="font-medium text-sm">{plant.name}</h3>
-                <p className="text-xs text-muted-foreground capitalize">{plant.category}</p>
-              </CardContent>
-            </Card>
-          ))}
         </div>
       </div>
     </MainLayout>

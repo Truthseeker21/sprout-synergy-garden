@@ -14,6 +14,7 @@ import Challenges from "./pages/Challenges";
 import Journal from "./pages/Journal";
 import Settings from "./pages/Settings";
 import PlantIdentification from "./pages/PlantIdentification";
+import GardenPlanner from "./pages/GardenPlanner";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,14 @@ const App = () => (
             element={
               <PrivateRoute>
                 <PlantIdentification />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/garden-planner" 
+            element={
+              <PrivateRoute>
+                <GardenPlanner />
               </PrivateRoute>
             } 
           />
