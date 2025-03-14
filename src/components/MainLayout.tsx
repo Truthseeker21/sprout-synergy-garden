@@ -121,7 +121,7 @@ const MainLayout = ({ children, title }: MainLayoutProps) => {
         <div className="border-t pt-4 mt-4">
           <div className="flex items-center mb-4">
             <div className="h-8 w-8 rounded-full bg-muted-foreground flex items-center justify-center text-primary-foreground">
-              {user?.name.charAt(0)}
+              {user?.name?.charAt(0)}
             </div>
             <div className="ml-2">
               <div className="text-sm font-medium">{user?.name}</div>

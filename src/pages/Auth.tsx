@@ -16,6 +16,7 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
       await login(email, password);
       toast({
@@ -24,6 +25,7 @@ const Auth = () => {
       });
       navigate('/dashboard');
     } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: 'Error',
         description: 'Invalid credentials',
@@ -62,7 +64,7 @@ const Auth = () => {
               className="w-full"
             />
           </div>
-          <Button type="submit" className="w-full bg-primary hover:bg-primary-hover">
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
             Sign In
           </Button>
         </form>
