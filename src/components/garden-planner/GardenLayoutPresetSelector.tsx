@@ -2,8 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { gardenLayoutPresets } from '@/data/gardenObjects';
-import { GardenLayoutPreset } from '@/types/GardenTypes';
+import { gardenLayoutPresets, GardenLayoutPreset } from '@/types/GardenTypes';
 
 interface GardenLayoutPresetSelectorProps {
   onSelectPreset: (preset: GardenLayoutPreset) => void;
@@ -11,59 +10,32 @@ interface GardenLayoutPresetSelectorProps {
 
 const GardenLayoutPresetSelector = ({ onSelectPreset }: GardenLayoutPresetSelectorProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
       {gardenLayoutPresets.map((preset) => (
-        <Card key={preset.id} className="overflow-hidden">
-          <div className="h-36 overflow-hidden">
-            <img
-              src={preset.image}
-              alt={preset.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <CardHeader className="py-3">
+        <Card key={preset.id} className="cursor-pointer overflow-hidden">
+          <CardHeader className="p-4">
             <CardTitle className="text-lg">{preset.name}</CardTitle>
             <CardDescription>{preset.description}</CardDescription>
           </CardHeader>
-          <CardFooter className="pt-0">
+          <CardContent className="p-0">
+            <div className="h-48 bg-muted flex items-center justify-center">
+              <img 
+                src={preset.imageUrl} 
+                alt={preset.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="p-4">
             <Button 
-              variant="outline" 
-              className="w-full"
+              className="w-full" 
               onClick={() => onSelectPreset(preset)}
             >
-              Select Template
+              Select This Layout
             </Button>
           </CardFooter>
         </Card>
       ))}
-      
-      <Card className="overflow-hidden">
-        <div className="h-36 bg-muted flex items-center justify-center border-b">
-          <div className="text-4xl text-muted-foreground">+</div>
-        </div>
-        <CardHeader className="py-3">
-          <CardTitle className="text-lg">Custom Garden</CardTitle>
-          <CardDescription>Create your own garden layout from scratch</CardDescription>
-        </CardHeader>
-        <CardFooter className="pt-0">
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={() => onSelectPreset({
-              id: 'custom',
-              name: 'Custom Garden',
-              description: 'Your custom garden layout',
-              image: '/placeholder.svg',
-              type: 'custom',
-              width: 500,
-              height: 400,
-              background: 'grass'
-            })}
-          >
-            Start from Scratch
-          </Button>
-        </CardFooter>
-      </Card>
     </div>
   );
 };

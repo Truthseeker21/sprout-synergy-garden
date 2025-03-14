@@ -1,200 +1,136 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-import { GardenObject } from '@/types/GardenTypes';
+import React, { useRef, useEffect, useState } from 'react';
+import { GardenObject, GardenBackground } from '@/types/GardenTypes';
 import GardenItem from './GardenItem';
-import { ZoomIn, ZoomOut, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 interface GardenCanvasProps {
   width: number;
   height: number;
   objects: GardenObject[];
-  background: 'grass' | 'soil' | 'concrete' | 'grid';
+  background: GardenBackground;
   onObjectsChange: (objects: GardenObject[]) => void;
   isEditing: boolean;
-  onExport?: () => void;
+  onExport: () => void;
 }
 
-const GardenCanvas = ({ 
-  width, 
-  height, 
-  objects, 
-  background, 
-  onObjectsChange, 
+const GardenCanvas = ({
+  width,
+  height,
+  objects,
+  background,
+  onObjectsChange,
   isEditing,
   onExport
 }: GardenCanvasProps) => {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
-
-  // Handle object selection
-  const handleSelect = (id: string) => {
-    if (!isEditing) return;
-    setSelectedId(id === selectedId ? null : id);
-  };
-
-  // Handle object position change
-  const handleDragEnd = (id: string, newX: number, newY: number) => {
-    if (!isEditing) return;
-    const updatedObjects = objects.map(obj => 
-      obj.id === id ? { ...obj, x: newX, y: newY } : obj
-    );
-    onObjectsChange(updatedObjects);
-  };
-
-  // Handle object rotation
-  const handleRotate = (id: string, degrees: number) => {
-    if (!isEditing) return;
-    const updatedObjects = objects.map(obj => 
-      obj.id === id ? { ...obj, rotation: degrees } : obj
-    );
-    onObjectsChange(updatedObjects);
-  };
-
-  // Handle object deletion with Delete key
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  
+  // Export garden as image
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' && selectedId && isEditing) {
-        const updatedObjects = objects.filter(obj => obj.id !== selectedId);
-        onObjectsChange(updatedObjects);
-        setSelectedId(null);
+    // This is a placeholder that would be replaced with actual implementation
+    const handleExport = async () => {
+      if (canvasRef.current) {
+        try {
+          const canvas = await html2canvas(canvasRef.current);
+          const image = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.href = image;
+          link.download = 'my-garden.png';
+          link.click();
+          onExport();
+        } catch (error) {
+          console.error('Error exporting garden:', error);
+        }
       }
     };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedId, objects, onObjectsChange, isEditing]);
-
-  // Get background style based on type
+    
+    // This would be connected to a button or other trigger
+    // For now, it's just a placeholder
+    window.handleGardenExport = handleExport;
+  }, [onExport]);
+  
   const getBackgroundStyle = () => {
     switch (background) {
       case 'grass':
-        return 'bg-green-100';
+        return 'bg-green-200';
       case 'soil':
-        return 'bg-amber-100';
+        return 'bg-amber-800';
+      case 'gravel':
+        return 'bg-gray-300';
       case 'concrete':
-        return 'bg-gray-200';
-      case 'grid':
-        return 'bg-white bg-grid-pattern';
+        return 'bg-gray-400';
+      case 'wood':
+        return 'bg-amber-600';
       default:
-        return 'bg-white';
+        return 'bg-green-200';
     }
   };
-
-  // Canvas pan handling
-  const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only handle left click
-    
-    // Check if we clicked on the canvas and not an object
-    if ((e.target as HTMLElement).classList.contains('garden-canvas')) {
-      setIsDragging(true);
-      setStartPosition({ x: e.clientX - position.x, y: e.clientY - position.y });
-    }
+  
+  const handleDragStart = (id: string) => {
+    if (!isEditing) return;
+    setDraggingId(id);
   };
-
-  const handleCanvasMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    
-    setPosition({
-      x: e.clientX - startPosition.x,
-      y: e.clientY - startPosition.y
-    });
+  
+  const handleDragMove = (id: string, x: number, y: number) => {
+    if (!isEditing) return;
+    const updatedObjects = objects.map(obj => 
+      obj.id === id ? { ...obj, x, y } : obj
+    );
+    onObjectsChange(updatedObjects);
   };
-
-  const handleCanvasMouseUp = () => {
-    setIsDragging(false);
+  
+  const handleDragEnd = () => {
+    if (!isEditing) return;
+    setDraggingId(null);
   };
-
-  // Zoom handling with wheel
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    const newScale = Math.max(0.5, Math.min(2, scale + delta));
-    setScale(newScale);
+  
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.1, 2));
   };
-
-  // Export garden as image
-  const handleExportImage = async () => {
-    if (!canvasRef.current) return;
-    
-    try {
-      const canvas = await html2canvas(canvasRef.current, {
-        backgroundColor: null,
-        scale: 2
-      });
-      
-      const image = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = 'garden-plan.png';
-      link.click();
-      
-      if (onExport) onExport();
-    } catch (error) {
-      console.error('Error exporting garden:', error);
-    }
+  
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
   };
-
+  
   return (
-    <div 
-      className="relative overflow-hidden border rounded-lg bg-gray-50 h-[600px]"
-      onWheel={handleWheel}
-    >
+    <div className="relative">
+      <div className="absolute top-2 right-2 flex space-x-2 z-10">
+        <button
+          className="bg-white p-2 rounded-full shadow"
+          onClick={handleZoomIn}
+        >
+          +
+        </button>
+        <button
+          className="bg-white p-2 rounded-full shadow"
+          onClick={handleZoomOut}
+        >
+          -
+        </button>
+      </div>
+      
       <div 
         ref={canvasRef}
-        className={`garden-canvas absolute ${getBackgroundStyle()} cursor-move transition-transform`}
-        style={{ 
-          width: width, 
-          height: height,
-          transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-          transformOrigin: '0 0'
+        className={`relative overflow-hidden border border-gray-300 rounded-lg ${getBackgroundStyle()}`}
+        style={{
+          width: width * zoomLevel,
+          height: height * zoomLevel,
+          transition: 'width 0.3s, height 0.3s'
         }}
-        onMouseDown={handleCanvasMouseDown}
-        onMouseMove={handleCanvasMouseMove}
-        onMouseUp={handleCanvasMouseUp}
-        onMouseLeave={handleCanvasMouseUp}
       >
-        {objects.map(object => (
+        {objects.map((object) => (
           <GardenItem
             key={object.id}
             object={object}
-            isSelected={object.id === selectedId}
-            onSelect={() => handleSelect(object.id)}
-            onDragEnd={(x, y) => handleDragEnd(object.id, x, y)}
-            onRotate={(degrees) => handleRotate(object.id, degrees)}
             isEditing={isEditing}
+            isDragging={object.id === draggingId}
+            zoomLevel={zoomLevel}
+            onDragStart={() => handleDragStart(object.id)}
+            onDragMove={(x, y) => handleDragMove(object.id, x, y)}
+            onDragEnd={handleDragEnd}
           />
         ))}
-      </div>
-
-      {/* Controls */}
-      <div className="absolute bottom-4 right-4 bg-white rounded-md shadow-md p-2 flex space-x-2">
-        <button 
-          onClick={() => setScale(Math.min(2, scale + 0.1))}
-          className="p-2 hover:bg-gray-100 rounded"
-          title="Zoom In"
-        >
-          <ZoomIn className="h-4 w-4" />
-        </button>
-        <div className="px-2 flex items-center">{Math.round(scale * 100)}%</div>
-        <button 
-          onClick={() => setScale(Math.max(0.5, scale - 0.1))}
-          className="p-2 hover:bg-gray-100 rounded"
-          title="Zoom Out"
-        >
-          <ZoomOut className="h-4 w-4" />
-        </button>
-        <button
-          onClick={handleExportImage}
-          className="p-2 hover:bg-gray-100 rounded ml-2"
-          title="Export as Image"
-        >
-          <Download className="h-4 w-4" />
-        </button>
       </div>
     </div>
   );
