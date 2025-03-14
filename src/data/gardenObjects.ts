@@ -149,7 +149,6 @@ export const gardenLayoutPresets: GardenLayoutPreset[] = [
     name: 'Small Balcony Garden',
     description: 'Perfect for small balconies in urban settings',
     imageUrl: '/placeholder.svg',
-    type: 'balcony',
     width: 300,
     height: 150,
     background: 'concrete'
@@ -159,7 +158,6 @@ export const gardenLayoutPresets: GardenLayoutPreset[] = [
     name: 'Backyard Vegetable Garden',
     description: 'A productive vegetable garden for your backyard',
     imageUrl: '/placeholder.svg',
-    type: 'backyard',
     width: 500,
     height: 400,
     background: 'soil'
@@ -169,7 +167,6 @@ export const gardenLayoutPresets: GardenLayoutPreset[] = [
     name: 'Community Garden Plot',
     description: 'Standard community garden plot layout',
     imageUrl: '/placeholder.svg',
-    type: 'community',
     width: 400,
     height: 200,
     background: 'soil'
@@ -179,7 +176,6 @@ export const gardenLayoutPresets: GardenLayoutPreset[] = [
     name: 'Indoor Container Garden',
     description: 'Container arrangement for indoor spaces',
     imageUrl: '/placeholder.svg',
-    type: 'indoor',
     width: 250,
     height: 150,
     background: 'concrete'
@@ -189,7 +185,6 @@ export const gardenLayoutPresets: GardenLayoutPreset[] = [
     name: 'Rooftop Garden',
     description: 'Optimized layout for rooftop conditions',
     imageUrl: '/placeholder.svg',
-    type: 'rooftop',
     width: 500,
     height: 300,
     background: 'concrete'
