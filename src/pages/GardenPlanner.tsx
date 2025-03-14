@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/MainLayout';
+import MainLayout from '@/components/MainLayout';
 import { GardenObject, GardenLayout, GardenLayoutPreset } from '@/types/GardenTypes';
 import GardenCanvas from '@/components/garden-planner/GardenCanvas';
 import GardenToolbar from '@/components/garden-planner/GardenToolbar';

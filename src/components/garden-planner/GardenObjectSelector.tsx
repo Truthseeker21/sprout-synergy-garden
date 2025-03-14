@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { gardenObjectTemplates } from '@/data/gardenObjects';
 import { GardenObject, GardenObjectType } from '@/types/GardenTypes';
-import { Flower, Tree, Box, Home, Footprints, CircleDot, Search } from 'lucide-react';
+import { Flower, Trees, Box, Home, Footprints, CircleDot, Search } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface GardenObjectSelectorProps {
@@ -41,7 +40,7 @@ const GardenObjectSelector = ({ onSelectObject, isEditing }: GardenObjectSelecto
       case 'plant':
         return <Flower className="h-4 w-4" />;
       case 'tree':
-        return <Tree className="h-4 w-4" />;
+        return <Trees className="h-4 w-4" />;
       case 'container':
         return <Box className="h-4 w-4" />;
       case 'structure':
@@ -76,7 +75,7 @@ const GardenObjectSelector = ({ onSelectObject, isEditing }: GardenObjectSelecto
               <Flower className="h-4 w-4 mr-1" /> Plants
             </TabsTrigger>
             <TabsTrigger value="trees" className="flex items-center">
-              <Tree className="h-4 w-4 mr-1" /> Trees
+              <Trees className="h-4 w-4 mr-1" /> Trees
             </TabsTrigger>
             <TabsTrigger value="containers" className="flex items-center">
               <Box className="h-4 w-4 mr-1" /> Containers

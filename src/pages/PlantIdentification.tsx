@@ -1,13 +1,13 @@
 
 import React, { useState, useRef } from 'react';
-import { MainLayout } from '@/components/MainLayout';
+import MainLayout from '@/components/MainLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getPlantById, getRecommendedPlants, plants } from '@/data/plants';
 import PlantIdentificationResult from '@/components/PlantIdentificationResult';
-import { Camera, Upload, Info, Plant as PlantIcon } from 'lucide-react';
+import { Camera, Upload, Info, Leaf as PlantIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PlantIdentification = () => {

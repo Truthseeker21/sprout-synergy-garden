@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { gardenObjectTemplates } from '@/data/gardenObjects';
@@ -6,7 +5,7 @@ import { GardenObject, GardenObjectType, GardenObjectShape } from '@/types/Garde
 import { Tooltip } from '@/components/ui/tooltip';
 import { 
   Flower, 
-  Tree, 
+  Trees, 
   Box, 
   Home, 
   Footprints, 
@@ -83,7 +82,7 @@ const GardenToolbar = ({
         
         <div className="grid grid-cols-6 gap-4">
           {renderObjectButton('plant', <Flower className="h-4 w-4" />, 'Plant')}
-          {renderObjectButton('tree', <Tree className="h-4 w-4" />, 'Tree')}
+          {renderObjectButton('tree', <Trees className="h-4 w-4" />, 'Tree')}
           {renderObjectButton('container', <Box className="h-4 w-4" />, 'Container')}
           {renderObjectButton('structure', <Home className="h-4 w-4" />, 'Structure')}
           {renderObjectButton('path', <Footprints className="h-4 w-4" />, 'Path')}

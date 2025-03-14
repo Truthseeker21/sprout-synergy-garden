@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { GardenObject } from '@/types/GardenTypes';
-import { Flower, Tree, Box, Home, Footprints, CircleDot } from 'lucide-react';
+import { Flower, Trees, Box, Home, Footprints, CircleDot } from 'lucide-react';
 
 interface GardenItemProps {
   object: GardenObject;
@@ -51,17 +51,17 @@ const GardenItem = ({
 
   const getTypeIcon = () => {
     switch (object.type) {
-      case 'plant':
+      case "plant":
         return <Flower className="h-4 w-4" />;
-      case 'tree':
-        return <Tree className="h-4 w-4" />;
-      case 'container':
+      case "tree":
+        return <Trees className="h-4 w-4" />;
+      case "container":
         return <Box className="h-4 w-4" />;
-      case 'structure':
+      case "structure":
         return <Home className="h-4 w-4" />;
-      case 'path':
+      case "path":
         return <Footprints className="h-4 w-4" />;
-      case 'decoration':
+      case "decoration":
         return <CircleDot className="h-4 w-4" />;
       default:
         return null;
