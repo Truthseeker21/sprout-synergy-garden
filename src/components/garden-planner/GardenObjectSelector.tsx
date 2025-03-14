@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { GardenObject, GardenObjectType, GardenObjectShape, GardenObjectSize } from '@/types/GardenTypes';
-import { Flower, Home, Chair, TreeDeciduous } from 'lucide-react';
+import { Flower, Home, TreeDeciduous, Sofa } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface GardenObjectSelectorProps {
@@ -70,6 +70,12 @@ const GardenObjectSelector = ({
         return 'Structure';
       case 'decoration':
         return 'Decoration';
+      case 'tree':
+        return 'Tree';
+      case 'container':
+        return 'Container';
+      case 'path':
+        return 'Path';
       default:
         return 'Object';
     }
@@ -114,7 +120,7 @@ const GardenObjectSelector = ({
               className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
             >
               <RadioGroupItem value="furniture" id="furniture" className="sr-only" />
-              <Chair className="mb-2 h-6 w-6" />
+              <Sofa className="mb-2 h-6 w-6" />
               <span className="text-sm">Furniture</span>
             </Label>
             

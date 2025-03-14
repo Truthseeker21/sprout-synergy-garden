@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { GardenObject, GardenBackground } from '@/types/GardenTypes';
 import GardenItem from './GardenItem';
@@ -28,7 +29,6 @@ const GardenCanvas = ({
   
   // Export garden as image
   useEffect(() => {
-    // This is a placeholder that would be replaced with actual implementation
     const handleExport = async () => {
       if (canvasRef.current) {
         try {
@@ -45,9 +45,17 @@ const GardenCanvas = ({
       }
     };
     
-    // This would be connected to a button or other trigger
-    // For now, it's just a placeholder
-    window.handleGardenExport = handleExport;
+    // Create a method to handle export without attaching to window
+    const exportButton = document.getElementById('export-garden-button');
+    if (exportButton) {
+      exportButton.addEventListener('click', handleExport);
+    }
+    
+    return () => {
+      if (exportButton) {
+        exportButton.removeEventListener('click', handleExport);
+      }
+    };
   }, [onExport]);
   
   const getBackgroundStyle = () => {

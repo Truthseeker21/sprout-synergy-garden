@@ -2,7 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { gardenLayoutPresets, GardenLayoutPreset } from '@/types/GardenTypes';
+import { gardenLayoutPresets } from '@/data/gardenObjects';
+import { GardenLayoutPreset } from '@/types/GardenTypes';
 
 interface GardenLayoutPresetSelectorProps {
   onSelectPreset: (preset: GardenLayoutPreset) => void;

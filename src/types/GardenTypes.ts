@@ -1,5 +1,5 @@
 
-export type GardenObjectType = 'plant' | 'furniture' | 'structure' | 'decoration';
+export type GardenObjectType = 'plant' | 'furniture' | 'structure' | 'decoration' | 'tree' | 'container' | 'path';
 export type GardenObjectSize = 'small' | 'medium' | 'large';
 export type GardenObjectShape = 'circle' | 'square' | 'rectangle';
 export type GardenBackground = 'grass' | 'soil' | 'gravel' | 'concrete' | 'wood';
@@ -16,6 +16,7 @@ export interface GardenObject {
   x: number;
   y: number;
   rotation: number;
+  plantId?: string; // Making plantId optional
 }
 
 export interface GardenLayout {
