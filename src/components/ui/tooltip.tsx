@@ -26,20 +26,23 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
+// Modified to make content an optional prop
 const Tooltip = ({ 
   children, 
   content,
   ...props 
 }: { 
   children: React.ReactNode; 
-  content: React.ReactNode;
+  content?: React.ReactNode;
 } & React.ComponentPropsWithoutRef<typeof TooltipRoot>) => (
   <TooltipProvider>
     <TooltipRoot {...props}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent>
-        <p>{content}</p>
-      </TooltipContent>
+      {content && (
+        <TooltipContent>
+          <p>{content}</p>
+        </TooltipContent>
+      )}
     </TooltipRoot>
   </TooltipProvider>
 )

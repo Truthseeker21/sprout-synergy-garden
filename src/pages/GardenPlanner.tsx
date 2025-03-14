@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/MainLayout';
 import { GardenObject, GardenLayout, GardenLayoutPreset } from '@/types/GardenTypes';
@@ -32,7 +31,6 @@ const GardenPlanner = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  // Add an object to the garden
   const handleAddObject = (object: GardenObject) => {
     setLayout(prev => ({
       ...prev,
@@ -41,7 +39,6 @@ const GardenPlanner = () => {
     }));
   };
   
-  // Update objects in the garden
   const handleObjectsChange = (objects: GardenObject[]) => {
     setLayout(prev => ({
       ...prev,
@@ -50,7 +47,6 @@ const GardenPlanner = () => {
     }));
   };
   
-  // Clear all objects from the garden
   const handleClearGarden = () => {
     setLayout(prev => ({
       ...prev,
@@ -64,29 +60,20 @@ const GardenPlanner = () => {
     });
   };
   
-  // Save the garden layout
   const handleSaveGarden = () => {
-    // In a real application, this would save to a database
-    // For now, we'll just show a success message
-    
     toast({
       title: "Garden saved",
       description: "Your garden layout has been saved successfully."
     });
   };
   
-  // Export the garden as an image
   const handleExportGarden = () => {
-    // In a real application, this would generate an image file
-    // For now, we'll just show a success message
-    
     toast({
       title: "Garden exported",
       description: "Your garden layout has been exported as an image."
     });
   };
   
-  // Select a garden layout preset
   const handleSelectPreset = (preset: GardenLayoutPreset) => {
     setLayout({
       id: uuidv4(),
@@ -104,7 +91,7 @@ const GardenPlanner = () => {
   };
   
   return (
-    <MainLayout>
+    <MainLayout title="Garden Layout Planner">
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Garden Layout Planner</h1>
@@ -131,7 +118,6 @@ const GardenPlanner = () => {
         </div>
         
         {isMobile ? (
-          // Mobile layout
           <div className="space-y-4">
             <GardenCanvas 
               width={layout.width}
@@ -183,7 +169,6 @@ const GardenPlanner = () => {
             </div>
           </div>
         ) : (
-          // Desktop layout with resizable panels
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel defaultSize={75} minSize={60}>
               <GardenCanvas 

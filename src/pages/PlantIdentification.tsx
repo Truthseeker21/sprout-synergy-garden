@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import MainLayout from '@/components/MainLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,8 +30,6 @@ const PlantIdentification = () => {
   };
 
   const handleCameraCapture = () => {
-    // In a real application, this would access the device camera
-    // For this prototype, we'll simulate it by clicking the file input
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -50,12 +47,9 @@ const PlantIdentification = () => {
 
     setIsAnalyzing(true);
     
-    // Simulate API call to identify plant
     setTimeout(() => {
-      // For demo purposes, randomly select a plant from our database
       const randomPlant = plants[Math.floor(Math.random() * plants.length)];
-      // Generate a random confidence level (higher is more likely for demo purposes)
-      const randomConfidence = Math.floor(Math.random() * 30) + 70; // 70-99%
+      const randomConfidence = Math.floor(Math.random() * 30) + 70;
       
       setIdentifiedPlant(randomPlant);
       setConfidence(randomConfidence);
@@ -79,7 +73,7 @@ const PlantIdentification = () => {
   };
 
   return (
-    <MainLayout>
+    <MainLayout title="Plant Identification">
       <div className="container mx-auto py-6 max-w-5xl">
         <h1 className="text-3xl font-bold mb-6">Plant Identification</h1>
         
