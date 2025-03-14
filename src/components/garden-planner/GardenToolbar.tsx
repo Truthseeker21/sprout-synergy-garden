@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { gardenObjectTemplates } from '@/data/gardenObjects';
-import { GardenObject, GardenObjectType } from '@/types/GardenTypes';
+import { GardenObject, GardenObjectType, GardenObjectSize } from '@/types/GardenTypes';
 import { Tooltip } from '@/components/ui/tooltip';
 import { 
   Flower, 
@@ -61,6 +61,14 @@ const GardenToolbar = ({
   const handleAddObject = (type: GardenObjectType, shape: 'circle' | 'square' | 'rectangle' = 'square') => {
     const template = gardenObjectTemplates.find(obj => obj.type === type) || gardenObjectTemplates[0];
     
+    // Determine the appropriate size category based on objectSize value
+    let sizeCategory: GardenObjectSize = 'medium';
+    if (objectSize <= 30) {
+      sizeCategory = 'small';
+    } else if (objectSize >= 70) {
+      sizeCategory = 'large';
+    }
+    
     const newObject: GardenObject = {
       id: uuidv4(),
       name: template.name,
@@ -71,7 +79,8 @@ const GardenToolbar = ({
       color: objectColor,
       x: 100,
       y: 100,
-      rotation: 0
+      rotation: 0,
+      size: sizeCategory // Add the required size property
     };
     
     onAddObject(newObject);
