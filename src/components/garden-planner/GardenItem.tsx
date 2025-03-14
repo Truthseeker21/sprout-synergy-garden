@@ -1,13 +1,15 @@
 
 import React, { useState } from 'react';
 import { GardenObject } from '@/types/GardenTypes';
-import { Flower, Trees, Box, Home, Footprints, CircleDot } from 'lucide-react';
+import { Flower, Trees, Box, Home, Footprints, CircleDot, RotateCw } from 'lucide-react';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface GardenItemProps {
   object: GardenObject;
   isSelected: boolean;
   onSelect: () => void;
   onDragEnd: (x: number, y: number) => void;
+  onRotate: (degrees: number) => void;
   isEditing: boolean;
 }
 
@@ -16,6 +18,7 @@ const GardenItem = ({
   isSelected, 
   onSelect, 
   onDragEnd,
+  onRotate,
   isEditing
 }: GardenItemProps) => {
   const [position, setPosition] = useState({ x: object.x, y: object.y });
@@ -47,6 +50,12 @@ const GardenItem = ({
       setIsDragging(false);
       onDragEnd(position.x, position.y);
     }
+  };
+
+  const handleRotate = (e: React.MouseEvent) => {
+    if (!isEditing) return;
+    e.stopPropagation();
+    onRotate((object.rotation || 0) + 45);
   };
 
   const getTypeIcon = () => {
@@ -92,7 +101,7 @@ const GardenItem = ({
         width: object.width,
         height: object.height,
         backgroundColor: object.color || '#ccc',
-        transform: `rotate(${object.rotation}deg)`,
+        transform: `rotate(${object.rotation || 0}deg)`,
         opacity: isDragging ? 0.7 : 1,
         cursor: isEditing ? 'move' : 'pointer'
       }}
@@ -108,6 +117,17 @@ const GardenItem = ({
           {object.name}
         </span>
       </div>
+      
+      {isSelected && isEditing && (
+        <Tooltip content="Rotate">
+          <button
+            className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+            onClick={handleRotate}
+          >
+            <RotateCw className="h-3 w-3 text-gray-600" />
+          </button>
+        </Tooltip>
+      )}
     </div>
   );
 };

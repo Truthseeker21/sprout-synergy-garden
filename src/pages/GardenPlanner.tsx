@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/MainLayout';
 import { GardenObject, GardenLayout, GardenLayoutPreset } from '@/types/GardenTypes';
@@ -28,8 +29,21 @@ const GardenPlanner = () => {
   });
   const [isLayoutSelectOpen, setIsLayoutSelectOpen] = useState(true);
   const [isEditing, setIsEditing] = useState(true);
+  const [savedLayouts, setSavedLayouts] = useState<GardenLayout[]>([]);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  
+  // Load saved layouts from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('gardenLayouts');
+    if (saved) {
+      try {
+        setSavedLayouts(JSON.parse(saved));
+      } catch (e) {
+        console.error("Error loading saved layouts:", e);
+      }
+    }
+  }, []);
   
   const handleAddObject = (object: GardenObject) => {
     setLayout(prev => ({
@@ -61,6 +75,29 @@ const GardenPlanner = () => {
   };
   
   const handleSaveGarden = () => {
+    const layoutToSave = {
+      ...layout,
+      updatedAt: new Date().toISOString()
+    };
+    
+    // Check if we're updating an existing layout or creating a new one
+    const existingIndex = savedLayouts.findIndex(l => l.id === layout.id);
+    
+    let updatedLayouts: GardenLayout[];
+    if (existingIndex >= 0) {
+      // Update existing layout
+      updatedLayouts = [...savedLayouts];
+      updatedLayouts[existingIndex] = layoutToSave;
+    } else {
+      // Add new layout
+      updatedLayouts = [...savedLayouts, layoutToSave];
+    }
+    
+    setSavedLayouts(updatedLayouts);
+    
+    // Save to localStorage
+    localStorage.setItem('gardenLayouts', JSON.stringify(updatedLayouts));
+    
     toast({
       title: "Garden saved",
       description: "Your garden layout has been saved successfully."
@@ -126,6 +163,7 @@ const GardenPlanner = () => {
               background={layout.background}
               onObjectsChange={handleObjectsChange}
               isEditing={isEditing}
+              onExport={handleExportGarden}
             />
             
             <div className="flex justify-between">
@@ -178,6 +216,7 @@ const GardenPlanner = () => {
                 background={layout.background}
                 onObjectsChange={handleObjectsChange}
                 isEditing={isEditing}
+                onExport={handleExportGarden}
               />
             </ResizablePanel>
             

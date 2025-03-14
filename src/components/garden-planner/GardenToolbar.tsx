@@ -1,7 +1,9 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import { gardenObjectTemplates } from '@/data/gardenObjects';
-import { GardenObject, GardenObjectType, GardenObjectShape } from '@/types/GardenTypes';
+import { GardenObject, GardenObjectType } from '@/types/GardenTypes';
 import { Tooltip } from '@/components/ui/tooltip';
 import { 
   Flower, 
@@ -14,7 +16,11 @@ import {
   Download,
   Share,
   Trash,
-  RotateCw
+  RotateCw,
+  PaintBucket,
+  Square,
+  Circle,
+  FileText
 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -35,27 +41,51 @@ const GardenToolbar = ({
   isEditing,
   setIsEditing
 }: GardenToolbarProps) => {
-  const handleAddObject = (template: Omit<GardenObject, 'id' | 'x' | 'y'>) => {
+  const [selectedType, setSelectedType] = useState<GardenObjectType>('plant');
+  const [objectSize, setObjectSize] = useState(50);
+  const [objectColor, setObjectColor] = useState('#4CAF50');
+  
+  const colors = [
+    '#4CAF50', // Green
+    '#8BC34A', // Light Green
+    '#CDDC39', // Lime
+    '#FFC107', // Amber
+    '#FF9800', // Orange
+    '#795548', // Brown
+    '#607D8B', // Blue Grey
+    '#3F51B5', // Indigo
+    '#2196F3', // Blue
+    '#F44336', // Red
+  ];
+
+  const handleAddObject = (type: GardenObjectType, shape: 'circle' | 'square' | 'rectangle' = 'square') => {
+    const template = gardenObjectTemplates.find(obj => obj.type === type) || gardenObjectTemplates[0];
+    
     const newObject: GardenObject = {
-      ...template,
       id: uuidv4(),
+      name: template.name,
+      type: type,
+      shape: shape,
+      width: shape === 'rectangle' ? objectSize * 1.5 : objectSize,
+      height: objectSize,
+      color: objectColor,
       x: 100,
-      y: 100
+      y: 100,
+      rotation: 0
     };
+    
     onAddObject(newObject);
   };
 
   const renderObjectButton = (type: GardenObjectType, icon: React.ReactNode, label: string) => {
-    const templates = gardenObjectTemplates.filter(obj => obj.type === type);
-    
     return (
       <div className="flex flex-col items-center">
         <Tooltip content={label}>
           <Button 
-            variant="outline" 
+            variant={selectedType === type ? "default" : "outline"} 
             size="icon" 
             className="mb-1"
-            onClick={() => handleAddObject(templates[0])}
+            onClick={() => setSelectedType(type)}
             disabled={!isEditing}
           >
             {icon}
@@ -80,14 +110,72 @@ const GardenToolbar = ({
           </Button>
         </div>
         
-        <div className="grid grid-cols-6 gap-4">
-          {renderObjectButton('plant', <Flower className="h-4 w-4" />, 'Plant')}
-          {renderObjectButton('tree', <Trees className="h-4 w-4" />, 'Tree')}
-          {renderObjectButton('container', <Box className="h-4 w-4" />, 'Container')}
-          {renderObjectButton('structure', <Home className="h-4 w-4" />, 'Structure')}
-          {renderObjectButton('path', <Footprints className="h-4 w-4" />, 'Path')}
-          {renderObjectButton('decoration', <CircleDot className="h-4 w-4" />, 'Decoration')}
-        </div>
+        {isEditing && (
+          <>
+            <div className="grid grid-cols-6 gap-4">
+              {renderObjectButton('plant', <Flower className="h-4 w-4" />, 'Plant')}
+              {renderObjectButton('tree', <Trees className="h-4 w-4" />, 'Tree')}
+              {renderObjectButton('container', <Box className="h-4 w-4" />, 'Container')}
+              {renderObjectButton('structure', <Home className="h-4 w-4" />, 'Structure')}
+              {renderObjectButton('path', <Footprints className="h-4 w-4" />, 'Path')}
+              {renderObjectButton('decoration', <CircleDot className="h-4 w-4" />, 'Decoration')}
+            </div>
+            
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium">Object Size</h4>
+              <Slider
+                defaultValue={[50]}
+                min={20}
+                max={100}
+                step={5}
+                onValueChange={(value) => setObjectSize(value[0])}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Object Color</h4>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform ${
+                      objectColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setObjectColor(color)}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Object Shape</h4>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddObject(selectedType, 'square')}
+                >
+                  <Square className="h-4 w-4 mr-2" /> Square
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddObject(selectedType, 'circle')}
+                >
+                  <Circle className="h-4 w-4 mr-2" /> Circle
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddObject(selectedType, 'rectangle')}
+                >
+                  <FileText className="h-4 w-4 mr-2" /> Rectangle
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
         
         <div className="flex justify-between pt-2 border-t">
           <Button 

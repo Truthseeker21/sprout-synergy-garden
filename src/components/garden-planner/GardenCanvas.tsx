@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GardenObject } from '@/types/GardenTypes';
 import GardenItem from './GardenItem';
+import { ZoomIn, ZoomOut, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 interface GardenCanvasProps {
   width: number;
@@ -10,6 +12,7 @@ interface GardenCanvasProps {
   background: 'grass' | 'soil' | 'concrete' | 'grid';
   onObjectsChange: (objects: GardenObject[]) => void;
   isEditing: boolean;
+  onExport?: () => void;
 }
 
 const GardenCanvas = ({ 
@@ -18,7 +21,8 @@ const GardenCanvas = ({
   objects, 
   background, 
   onObjectsChange, 
-  isEditing 
+  isEditing,
+  onExport
 }: GardenCanvasProps) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -38,6 +42,15 @@ const GardenCanvas = ({
     if (!isEditing) return;
     const updatedObjects = objects.map(obj => 
       obj.id === id ? { ...obj, x: newX, y: newY } : obj
+    );
+    onObjectsChange(updatedObjects);
+  };
+
+  // Handle object rotation
+  const handleRotate = (id: string, degrees: number) => {
+    if (!isEditing) return;
+    const updatedObjects = objects.map(obj => 
+      obj.id === id ? { ...obj, rotation: degrees } : obj
     );
     onObjectsChange(updatedObjects);
   };
@@ -104,6 +117,28 @@ const GardenCanvas = ({
     setScale(newScale);
   };
 
+  // Export garden as image
+  const handleExportImage = async () => {
+    if (!canvasRef.current) return;
+    
+    try {
+      const canvas = await html2canvas(canvasRef.current, {
+        backgroundColor: null,
+        scale: 2
+      });
+      
+      const image = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = 'garden-plan.png';
+      link.click();
+      
+      if (onExport) onExport();
+    } catch (error) {
+      console.error('Error exporting garden:', error);
+    }
+  };
+
   return (
     <div 
       className="relative overflow-hidden border rounded-lg bg-gray-50 h-[600px]"
@@ -130,25 +165,35 @@ const GardenCanvas = ({
             isSelected={object.id === selectedId}
             onSelect={() => handleSelect(object.id)}
             onDragEnd={(x, y) => handleDragEnd(object.id, x, y)}
+            onRotate={(degrees) => handleRotate(object.id, degrees)}
             isEditing={isEditing}
           />
         ))}
       </div>
 
-      {/* Zoom controls */}
+      {/* Controls */}
       <div className="absolute bottom-4 right-4 bg-white rounded-md shadow-md p-2 flex space-x-2">
         <button 
           onClick={() => setScale(Math.min(2, scale + 0.1))}
           className="p-2 hover:bg-gray-100 rounded"
+          title="Zoom In"
         >
-          +
+          <ZoomIn className="h-4 w-4" />
         </button>
         <div className="px-2 flex items-center">{Math.round(scale * 100)}%</div>
         <button 
           onClick={() => setScale(Math.max(0.5, scale - 0.1))}
           className="p-2 hover:bg-gray-100 rounded"
+          title="Zoom Out"
         >
-          -
+          <ZoomOut className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleExportImage}
+          className="p-2 hover:bg-gray-100 rounded ml-2"
+          title="Export as Image"
+        >
+          <Download className="h-4 w-4" />
         </button>
       </div>
     </div>
