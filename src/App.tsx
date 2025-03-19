@@ -15,6 +15,7 @@ import Journal from "./pages/Journal";
 import Settings from "./pages/Settings";
 import PlantIdentification from "./pages/PlantIdentification";
 import GardenPlanner from "./pages/GardenPlanner";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -120,6 +121,14 @@ const App = () => (
             element={
               <PrivateRoute>
                 <Settings />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             } 
           />

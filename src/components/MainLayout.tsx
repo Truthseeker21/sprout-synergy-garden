@@ -1,137 +1,131 @@
 
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { 
-  Home, 
-  Sprout, 
-  BookOpen, 
-  Users, 
-  Award, 
-  Calendar, 
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import NotificationsPopover from './NotificationsPopover';
+import {
+  Menu,
+  Home,
+  Leaf,
+  Lightbulb,
+  Users,
+  Trophy,
+  Book,
+  Camera,
+  LayoutGrid,
   Settings,
   LogOut,
-  Menu,
-  X
+  User
 } from 'lucide-react';
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }
 
 const MainLayout = ({ children, title }: MainLayoutProps) => {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const { user, logout } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleLogout = () => {
     logout();
     navigate('/auth');
   };
 
-  const navigationItems = [
-    { icon: Home, label: 'Dashboard', path: '/dashboard' },
-    { icon: Sprout, label: 'Plants', path: '/plants' },
-    { icon: BookOpen, label: 'Techniques', path: '/techniques' },
-    { icon: Users, label: 'Community', path: '/community' },
-    { icon: Award, label: 'Challenges', path: '/challenges' },
-    { icon: Calendar, label: 'Garden Journal', path: '/journal' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
+  const menuItems = [
+    { icon: <Home className="h-5 w-5" />, label: 'Dashboard', path: '/dashboard' },
+    { icon: <Leaf className="h-5 w-5" />, label: 'Plants', path: '/plants' },
+    { icon: <Lightbulb className="h-5 w-5" />, label: 'Techniques', path: '/techniques' },
+    { icon: <Users className="h-5 w-5" />, label: 'Community', path: '/community' },
+    { icon: <Trophy className="h-5 w-5" />, label: 'Challenges', path: '/challenges' },
+    { icon: <Book className="h-5 w-5" />, label: 'Journal', path: '/journal' },
+    { icon: <Camera className="h-5 w-5" />, label: 'Identify', path: '/identify' },
+    { icon: <LayoutGrid className="h-5 w-5" />, label: 'Garden Planner', path: '/garden-planner' },
   ];
 
-  // Add admin link if user is admin
-  if (user?.isAdmin) {
-    navigationItems.push({
-      icon: Settings,
-      label: 'Admin Panel',
-      path: '/admin',
-    });
-  }
+  const showAdminDashboard = user?.isAdmin;
 
-  const isActive = (path: string) => {
-    return window.location.pathname === path;
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
   };
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      {/* Mobile Header */}
-      <div className="md:hidden bg-primary text-white p-4 flex justify-between items-center">
-        <h1 className="font-bold text-xl">AgriGrow</h1>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-white hover:bg-primary-hover"
-        >
-          {mobileMenuOpen ? <X /> : <Menu />}
-        </Button>
+  const Sidebar = () => (
+    <div className="hidden md:flex flex-col h-screen w-64 bg-background border-r">
+      <div className="p-6">
+        <h1 className="font-bold text-2xl text-primary">AgriGrow</h1>
+        <p className="text-xs text-muted-foreground">Urban Gardening Guide</p>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-background border-b p-4 space-y-2">
-          {navigationItems.map((item) => (
+      <ScrollArea className="flex-1 px-4">
+        <div className="space-y-2 py-2">
+          {menuItems.map((item) => (
             <Button
               key={item.path}
-              variant={isActive(item.path) ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => {
-                navigate(item.path);
-                setMobileMenuOpen(false);
-              }}
+              variant="ghost"
+              className={cn(
+                "w-full justify-start text-base font-normal",
+                window.location.pathname === item.path && "bg-muted font-medium"
+              )}
+              onClick={() => handleNavigation(item.path)}
             >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
+              <div className="flex items-center">
+                {item.icon}
+                <span className="ml-3">{item.label}</span>
+              </div>
             </Button>
           ))}
-          <Button 
-            variant="outline" 
-            className="w-full justify-start text-destructive hover:text-destructive"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
-        </div>
-      )}
 
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex flex-col w-56 bg-muted border-r min-h-screen p-4">
-        <div className="text-center mb-6">
-          <h1 className="font-bold text-xl text-primary">AgriGrow</h1>
-          <p className="text-xs text-muted-foreground">Urban Gardening Guide</p>
-        </div>
-        
-        <div className="space-y-1 flex-1">
-          {navigationItems.map((item) => (
+          {showAdminDashboard && (
             <Button
-              key={item.path}
-              variant={isActive(item.path) ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => navigate(item.path)}
+              variant="ghost"
+              className={cn(
+                "w-full justify-start text-base font-normal",
+                window.location.pathname === '/admin' && "bg-muted font-medium"
+              )}
+              onClick={() => handleNavigation('/admin')}
             >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
+              <div className="flex items-center">
+                <Settings className="h-5 w-5" />
+                <span className="ml-3">Admin</span>
+              </div>
             </Button>
-          ))}
+          )}
+        </div>
+      </ScrollArea>
+
+      <div className="p-4 border-t">
+        <div className="flex items-center mb-4">
+          <div className="h-8 w-8 rounded-full bg-muted-foreground flex items-center justify-center text-primary-foreground">
+            {user?.name?.charAt(0)}
+          </div>
+          <div className="ml-2">
+            <div className="text-sm font-medium">{user?.name}</div>
+            <div className="text-xs text-muted-foreground">{user?.email}</div>
+          </div>
         </div>
         
-        <div className="border-t pt-4 mt-4">
-          <div className="flex items-center mb-4">
-            <div className="h-8 w-8 rounded-full bg-muted-foreground flex items-center justify-center text-primary-foreground">
-              {user?.name?.charAt(0)}
-            </div>
-            <div className="ml-2">
-              <div className="text-sm font-medium">{user?.name}</div>
-              <div className="text-xs text-muted-foreground">{user?.email}</div>
-            </div>
-          </div>
+        <div className="flex space-x-2">
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full justify-start"
+            className="flex-1 justify-start" 
+            onClick={() => handleNavigation('/profile')}
+          >
+            <User className="h-4 w-4 mr-2" />
+            Profile
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 justify-start" 
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4 mr-2" />
@@ -139,11 +133,132 @@ const MainLayout = ({ children, title }: MainLayoutProps) => {
           </Button>
         </div>
       </div>
+    </div>
+  );
 
-      {/* Main Content */}
-      <div className="flex-1 p-4 md:p-6 overflow-auto">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold mb-6">{title}</h1>
+  const MobileHeader = () => (
+    <div className="md:hidden flex items-center justify-between p-4 border-b">
+      <div className="flex items-center">
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-72 p-0">
+            <SheetHeader className="p-6 border-b">
+              <SheetTitle className="text-left">
+                <h1 className="font-bold text-2xl text-primary">AgriGrow</h1>
+                <p className="text-xs text-muted-foreground">Urban Gardening Guide</p>
+              </SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="h-[calc(100vh-10rem)]">
+              <div className="space-y-2 p-4">
+                {menuItems.map((item) => (
+                  <Button
+                    key={item.path}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start text-base font-normal",
+                      window.location.pathname === item.path && "bg-muted font-medium"
+                    )}
+                    onClick={() => handleNavigation(item.path)}
+                  >
+                    <div className="flex items-center">
+                      {item.icon}
+                      <span className="ml-3">{item.label}</span>
+                    </div>
+                  </Button>
+                ))}
+
+                {showAdminDashboard && (
+                  <Button
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start text-base font-normal",
+                      window.location.pathname === '/admin' && "bg-muted font-medium"
+                    )}
+                    onClick={() => handleNavigation('/admin')}
+                  >
+                    <div className="flex items-center">
+                      <Settings className="h-5 w-5" />
+                      <span className="ml-3">Admin</span>
+                    </div>
+                  </Button>
+                )}
+              </div>
+            </ScrollArea>
+            <div className="p-4 border-t">
+              <div className="flex items-center mb-4">
+                <div className="h-8 w-8 rounded-full bg-muted-foreground flex items-center justify-center text-primary-foreground">
+                  {user?.name?.charAt(0)}
+                </div>
+                <div className="ml-2">
+                  <div className="text-sm font-medium">{user?.name}</div>
+                  <div className="text-xs text-muted-foreground">{user?.email}</div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 justify-start" 
+                  onClick={() => handleNavigation('/profile')}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 justify-start" 
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+        <h1 className="font-bold text-xl ml-2 text-primary">AgriGrow</h1>
+      </div>
+      <div className="flex items-center">
+        <NotificationsPopover />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => handleNavigation('/settings')}
+        >
+          <Settings className="h-5 w-5" />
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <div className="flex-1 flex flex-col min-h-screen">
+        <MobileHeader />
+        <div className={cn("flex-1 p-4 md:p-8", isMobile && "pt-2")}>
+          <div className="hidden md:flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <div className="flex items-center gap-2">
+              <NotificationsPopover />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handleNavigation('/settings')}
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+          {isMobile && title && (
+            <h1 className="text-xl font-bold mb-4">{title}</h1>
+          )}
           {children}
         </div>
       </div>
