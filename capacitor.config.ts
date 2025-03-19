@@ -9,11 +9,13 @@ const config: CapacitorConfig = {
     url: 'https://edb0235d-599d-4bdd-a2fd-fe1bd3cf0b59.lovableproject.com?forceHideBadge=true',
     cleartext: true
   },
-  ios: {
-    contentInset: 'always',
-  },
-  android: {
-    captureInput: true,
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#4CAF50",
+      showSpinner: true,
+      spinnerColor: "#FFFFFF"
+    }
   }
 };
 
