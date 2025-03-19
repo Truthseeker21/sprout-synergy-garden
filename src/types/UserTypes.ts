@@ -1,4 +1,3 @@
-
 export interface UserProfile {
   id: string;
   name: string;
@@ -36,6 +35,18 @@ export interface JournalEntry {
   plantIds?: string[];
   tags: string[];
 }
+
+export type DemoUser = {
+  id: string;
+  name: string;
+  email: string;
+  points: number;
+  challengesCompleted: number;
+  badges: Array<{ id: string; name: string }>;
+  activeChallenges: string[];
+  plants: string[];
+  notifications: number;
+};
 
 export const demoUser: UserProfile = {
   id: '2',
