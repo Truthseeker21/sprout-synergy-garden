@@ -17,7 +17,7 @@ import PlantIdentification from "./pages/PlantIdentification";
 import GardenPlanner from "./pages/GardenPlanner";
 import Profile from "./pages/Profile";
 import { useEffect } from "react";
-import { App as CapacitorApp } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
 const queryClient = new QueryClient();
 
@@ -39,15 +39,16 @@ const App = () => {
       console.log("Back button pressed");
     };
 
-    if (window.Capacitor) {
-      CapacitorApp.addListener('backButton', handleBackButton);
+    if (Capacitor.isPluginAvailable('App')) {
+      // Use Capacitor App plugin if available
+      import('@capacitor/app').then(appModule => {
+        appModule.App.addListener('backButton', handleBackButton);
+        
+        return () => {
+          appModule.App.removeAllListeners();
+        };
+      });
     }
-
-    return () => {
-      if (window.Capacitor) {
-        CapacitorApp.removeAllListeners();
-      }
-    };
   }, []);
 
   return (
