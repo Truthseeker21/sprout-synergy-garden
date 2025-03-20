@@ -8,7 +8,7 @@ import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import { getRecommendedPlants } from '@/data/plants';
 import { getRandomTips } from '@/data/gardeningTips';
 import { mockWeatherData, getGardeningWeatherRecommendations } from '@/data/weatherData';
-import { demoUser } from '@/types/UserTypes';
+import { demoUser, DemoUser } from '@/types/UserTypes';
 import { getActiveChallenges } from '@/data/challenges';
 
 const Dashboard = () => {

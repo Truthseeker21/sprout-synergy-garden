@@ -1,3 +1,4 @@
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -36,19 +37,12 @@ export interface JournalEntry {
   tags: string[];
 }
 
-export type DemoUser = {
-  id: string;
-  name: string;
-  email: string;
-  points: number;
-  challengesCompleted: number;
-  badges: Array<{ id: string; name: string }>;
-  activeChallenges: string[];
+export interface DemoUser extends UserProfile {
   plants: string[];
   notifications: number;
-};
+}
 
-export const demoUser: UserProfile = {
+export const demoUser: DemoUser = {
   id: '2',
   name: 'User',
   email: 'user@agrigrow.com',
@@ -101,10 +95,13 @@ export const demoUser: UserProfile = {
       content: 'My cherry tomato plant has its first flowers! I\'ve been making sure to water it consistently and it\'s getting about 6 hours of sunlight on the balcony.',
       tags: ['vegetables', 'tomatoes', 'flowers']
     }
-  ]
+  ],
+  // Add the missing properties required by DemoUser interface
+  plants: ['1', '3'],
+  notifications: 2
 };
 
-export const demoAdmin: UserProfile = {
+export const demoAdmin: UserProfile & { plants: string[]; notifications: number } = {
   id: '1',
   name: 'Admin',
   email: 'admin@agrigrow.com',
@@ -157,5 +154,8 @@ export const demoAdmin: UserProfile = {
       content: 'Hosted a seed saving workshop at the community garden. 15 participants learned how to properly harvest and store seeds from tomatoes, peppers, and beans.',
       tags: ['workshop', 'seed saving', 'community']
     }
-  ]
+  ],
+  // Add the missing properties required by DemoUser interface
+  plants: ['1', '2', '3'],
+  notifications: 0
 };

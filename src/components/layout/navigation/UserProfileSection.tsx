@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { UserProfile } from '@/types/UserTypes';
 
 interface UserProfileSectionProps {
-  user: UserProfile | null;
+  user: any; // Using any type to accommodate both AuthContext User and UserProfile types
   onProfileClick: () => void;
   onLogoutClick: () => void;
 }
